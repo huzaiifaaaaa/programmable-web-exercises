@@ -1,0 +1,88 @@
+openapi: 3.0.0
+info:
+  title: Inventory API
+  description: API for managing a product collection.
+  version: 1.0.0
+
+paths:
+  /products/:
+    get:
+      summary: List all products
+      description: Returns an array of all products in the inventory.
+      responses:
+        '200':
+          description: A successful list of products.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+              example:
+                - handle: "heavy-duty-wrench"
+                  weight: 1.5
+                  price: 25.99
+    post:
+      summary: Create a product
+      description: Adds a new product to the collection.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+            example:
+              handle: "industrial-drill"
+              weight: 5.2
+              price: 89.00
+      responses:
+        '201':
+          description: Product created.
+          headers:
+            Location:
+              description: URL of the new product.
+              schema:
+                type: string
+        '400':
+          description: Missing fields or invalid number format.
+        '409':
+          description: Product handle already exists.
+        '415':
+          description: Request must be in JSON format.
+
+  /products/{handle}/:
+    parameters:
+      - name: handle
+        in: path
+        required: true
+        description: The unique handle of the product.
+        schema:
+          type: string
+    get:
+      summary: Get a product
+      description: Returns a 501 Not Implemented status as per current code.
+      responses:
+        '501':
+          description: Not Implemented.
+
+components:
+  schemas:
+    Product:
+      type: object
+      required:
+        - handle
+        - weight
+        - price
+      properties:
+        handle:
+          type: string
+          description: Unique identifier for the product.
+        weight:
+          type: number
+          format: float
+          description: Product weight in kg.
+        price:
+          type: number
+          format: float
+          description: Product price.
+      additionalProperties: false
